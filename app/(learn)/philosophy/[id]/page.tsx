@@ -10,11 +10,11 @@ import { buildCategoryTree } from "@/lib/utils";
 import { SidebarNav } from "../components/sidebar-nav";
 import { TableOfContents } from "../components/table-of-contents";
 
-interface PhilosophyDetailPageProps {
+type PhilosophyDetailPageProps = {
   params: {
     id: string;
   };
-}
+};
 
 export default async function PhilosophyDetailPage({
   params,

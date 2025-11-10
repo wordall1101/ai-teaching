@@ -9,6 +9,7 @@ import {
   getCourseStatusClass,
   getCourseStatusText,
 } from "@/lib/utils";
+import { PromotionContent } from "./components/promotion-content";
 import { SidebarNav } from "./components/sidebar-nav";
 import { TableOfContents } from "./components/table-of-contents";
 
@@ -96,7 +97,7 @@ export default async function PhilosophyPage() {
       </main>
 
       <aside className="philosophy-sidebar-right">
-        <TableOfContents items={tocItems} />
+        <PromotionContent />
       </aside>
     </div>
   );

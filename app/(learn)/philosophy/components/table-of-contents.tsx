@@ -1,15 +1,15 @@
 // app/philosophy/components/table-of-contents.tsx
 "use client";
 
-interface TocItem {
+type TocItem = {
   id: string;
   title: string;
   level: number;
-}
+};
 
-interface TableOfContentsProps {
+type TableOfContentsProps = {
   items?: TocItem[];
-}
+};
 
 export function TableOfContents({ items = [] }: TableOfContentsProps) {
   if (items.length === 0) {
@@ -34,10 +34,10 @@ export function TableOfContents({ items = [] }: TableOfContentsProps) {
         <ul className="toc-list">
           {items.map((item) => (
             <li
-              key={item.id}
               className={`toc-item toc-item-level-${item.level}`}
+              key={item.id}
             >
-              <a href={`#${item.id}`} className="toc-link">
+              <a className="toc-link" href={`#${item.id}`}>
                 {item.title}
               </a>
             </li>
@@ -47,4 +47,3 @@ export function TableOfContents({ items = [] }: TableOfContentsProps) {
     </aside>
   );
 }
-

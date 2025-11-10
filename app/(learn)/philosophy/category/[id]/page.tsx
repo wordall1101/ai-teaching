@@ -5,18 +5,17 @@ import Link from "next/link";
 import {
   ArticleService,
   CategoryService,
-  TocItemService,
 } from "@/lib/db/repositories/db-service";
-import { type Article, type Category, Note } from "@/lib/db/schema";
+import type { Article, Category } from "@/lib/db/schema";
 import { buildCategoryTree } from "@/lib/utils";
+import { PromotionContent } from "../../components/promotion-content";
 import { SidebarNav } from "../../components/sidebar-nav";
-import { TableOfContents } from "../../components/table-of-contents";
 
-interface CategoryPageProps {
+type CategoryPageProps = {
   params: {
     id: string;
   };
-}
+};
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   // 获取当前分类信息
@@ -44,7 +43,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   // 获取分类树用于导航
-  let navItems = [];
+  let navItems: any[] = [];
   try {
     const categories = await CategoryService.findAll();
     navItems = buildCategoryTree(categories);
@@ -59,39 +58,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     // 首先获取当前分类的所有直接文章
     const directArticles = await ArticleService.findByCategoryId(params.id);
     articles = [...directArticles];
-
-    // // 获取当前分类的所有子分类
-    // const childCategories = await CategoryService.findByParentId(params.id);
-
-    // // 获取每个子分类的文章
-    // for (const childCategory of childCategories) {
-    //   const childArticles = await ArticleService.findByCategoryId(childCategory.id);
-    //   articles = [...articles, ...childArticles];
-    // }
-
-    // 按 order 字段排序
-    // articles.sort((a, b) => a.order - b.order);
   } catch (error) {
     console.error("Failed to load articles:", error);
     articles = [];
   }
-
-  // 获取当前分类的子分类（用于展示分类结构）
-  // let childCategories: Category[] = [];
-  // try {
-  //   childCategories = await CategoryService.findByParentId(params.id);
-  //   childCategories.sort((a, b) => a.order - b.order);
-  // } catch (error) {
-  //   console.error('Failed to load child categories:', error);
-  //   childCategories = [];
-  // }
-
-  // 目录数据
-  const tocItems = [
-    { id: "category-info", title: currentCategory.title, level: 1 },
-    { id: "subcategories", title: "子分类", level: 2 },
-    { id: "articles", title: "文章列表", level: 2 },
-  ];
 
   return (
     <div className="philosophy-container">
@@ -134,7 +104,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       {/* 右侧目录 */}
       <aside className="philosophy-sidebar-right">
-        <TableOfContents items={tocItems} />
+        <PromotionContent />
       </aside>
     </div>
   );
