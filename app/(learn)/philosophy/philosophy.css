@@ -1,0 +1,225 @@
+/* Apple-inspired components for philosophy homepage (scoped import) */
+.apple-hero {
+  position: relative;
+  border-radius: 0.75rem;
+  background: radial-gradient(1200px 600px at 20% -10%, #eef2ff 0%, transparent 60%),
+    radial-gradient(1000px 500px at 120% 0%, #ecfeff 0%, transparent 60%),
+    var(--card);
+  border: 1px solid var(--border);
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.apple-hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.apple-hero-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.apple-hero-subtitle {
+  margin: 0;
+  font-size: 1.0625rem;
+  color: var(--muted-foreground);
+}
+
+.apple-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: var(--muted);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.apple-pill-active,
+.status.active {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-color: transparent;
+}
+
+.apple-featured-course {
+  display: block;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.03), rgba(17, 24, 39, 0)) var(--card);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.apple-featured-course:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.25);
+  border-color: var(--ring);
+}
+
+.apple-featured-course.empty:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.apple-featured-course-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  padding: 1.75rem;
+}
+
+.apple-featured-course-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.apple-featured-course-title {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.apple-featured-course-desc {
+  margin: 0.25rem 0 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.apple-featured-cta {
+  margin-top: 0.5rem;
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.apple-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.apple-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.apple-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.2);
+  border-color: var(--ring);
+}
+
+.apple-card.empty {
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.apple-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem 0 1rem;
+}
+
+.apple-card-content {
+  padding: 0.5rem 1rem 1rem 1rem;
+}
+
+.apple-card-content h3 {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.0625rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.apple-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.apple-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  transition:
+    transform 0.15s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.apple-list-item:hover {
+  transform: translateY(-1px);
+  border-color: var(--ring);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.02), rgba(17, 24, 39, 0)) var(--card);
+}
+
+.apple-list-item.empty {
+  justify-content: center;
+}
+
+.apple-list-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.apple-list-title {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.apple-list-desc {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.apple-list-chevron {
+  color: var(--muted-foreground);
+  font-size: 1rem;
+}
+
+.philosophy-sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
