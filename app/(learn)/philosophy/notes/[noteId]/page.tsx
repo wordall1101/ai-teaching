@@ -1,5 +1,6 @@
 // app/philosophy/notes/[noteId]/page.tsx
 import Link from "next/link";
+import { Streamdown } from "streamdown";
 import {
   ArticleService,
   NoteService,
@@ -7,11 +8,11 @@ import {
 } from "@/lib/db/repositories/db-service";
 import { TableOfContents } from "../../components/table-of-contents";
 
-interface NoteDetailPageProps {
+type NoteDetailPageProps = {
   params: {
     noteId: string;
   };
-}
+};
 
 export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
   const note = await NoteService.findById(params.noteId);
@@ -61,9 +62,7 @@ export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
         <section className="philosophy-section" id="content">
           <h2>心得内容</h2>
           <div className="content">
-            {(note.content || "").split("\n\n").map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+            <Streamdown>{note.content || ""}</Streamdown>
           </div>
         </section>
       </main>

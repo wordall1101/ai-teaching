@@ -1,3 +1,4 @@
+import { Streamdown } from "streamdown";
 import {
   CategoryService,
   CourseService,
@@ -66,7 +67,7 @@ export default async function CourseDetailPage({
           {course.description ? (
             <section className="philosophy-section" id="description">
               <h2>课程简介</h2>
-              <p>{course.description}</p>
+              <Streamdown>{course.description || ""}</Streamdown>
             </section>
           ) : null}
         </div>

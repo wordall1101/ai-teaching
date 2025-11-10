@@ -1,5 +1,6 @@
 // app/philosophy/[id]/page.tsx
 import Link from "next/link";
+import { Streamdown } from "streamdown";
 import {
   ArticleService,
   CategoryService,
@@ -77,21 +78,21 @@ export default async function PhilosophyDetailPage({
           {article.original ? (
             <section className="philosophy-section" id="original">
               <h2>原文</h2>
-              <pre className="original-text">{article.original}</pre>
+              <Streamdown>{article.original || ""}</Streamdown>
             </section>
           ) : null}
 
           {article.historical ? (
             <section className="philosophy-section" id="historical">
               <h2>历史背景</h2>
-              <p>{article.historical}</p>
+              <Streamdown>{article.historical || ""}</Streamdown>
             </section>
           ) : null}
 
           {article.translation ? (
             <section className="philosophy-section" id="translation">
               <h2>译文</h2>
-              <p>{article.translation}</p>
+              <Streamdown>{article.translation || ""}</Streamdown>
             </section>
           ) : null}
 
