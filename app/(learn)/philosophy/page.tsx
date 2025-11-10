@@ -1,0 +1,103 @@
+// app/philosophy/page.tsx
+import Link from "next/link";
+import {
+  CategoryService,
+  CourseService,
+} from "@/lib/db/repositories/db-service";
+import {
+  buildCategoryTree,
+  getCourseStatusClass,
+  getCourseStatusText,
+} from "@/lib/utils";
+import { SidebarNav } from "./components/sidebar-nav";
+import { TableOfContents } from "./components/table-of-contents";
+
+export default async function PhilosophyPage() {
+  // 导航：分类树
+  let navItems: any[] = [];
+  try {
+    const categories = await CategoryService.findAll();
+    navItems = buildCategoryTree(categories);
+  } catch {
+    navItems = [];
+  }
+
+  // 课程列表
+  let courses: any[] = [];
+  try {
+    courses = await CourseService.findAll();
+  } catch {
+    courses = [];
+  }
+
+  const tocItems = [
+    { id: "intro", title: "介绍", level: 1 },
+    { id: "courses", title: "正在开设的课程", level: 2 },
+    { id: "categories", title: "分类列表", level: 2 },
+  ];
+
+  return (
+    <div className="philosophy-container">
+      <aside className="philosophy-sidebar-left">
+        <SidebarNav items={navItems} />
+      </aside>
+
+      <main className="philosophy-content">
+        <div className="philosophy-page-content">
+          <h1 id="intro">哲学经典学习</h1>
+          <section className="philosophy-section">
+            <p>探索正心、诚意、格物的哲学智慧，深入学习中华传统经典。</p>
+          </section>
+
+          <section className="philosophy-section" id="courses">
+            <h2>正在开设的课程</h2>
+            <div className="course-list">
+              {courses.length === 0 ? (
+                <div className="category-item">
+                  <p>暂无课程</p>
+                </div>
+              ) : (
+                courses.map((c) => (
+                  <Link
+                    className="course-card"
+                    href={`/philosophy/course/${c.id}`}
+                    key={c.id}
+                  >
+                    <h3>{c.title}</h3>
+                    <span
+                      className={`status ${getCourseStatusClass(c.status)}`}
+                    >
+                      {getCourseStatusText(c.status)}
+                    </span>
+                  </Link>
+                ))
+              )}
+            </div>
+          </section>
+
+          <section className="philosophy-section" id="categories">
+            <h2>分类列表</h2>
+            <div className="category-list">
+              {navItems.length === 0 ? (
+                <div className="category-item">
+                  <p>暂无分类</p>
+                </div>
+              ) : (
+                navItems.map((cat: any) => (
+                  <Link className="category-item" href={cat.href} key={cat.id}>
+                    <h3>{cat.title}</h3>
+                    {cat.description ? <p>{cat.description}</p> : null}
+                  </Link>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <aside className="philosophy-sidebar-right">
+        <TableOfContents items={tocItems} />
+      </aside>
+    </div>
+  );
+}

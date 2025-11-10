@@ -318,3 +318,746 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 哲学页面样式 */
+.philosophy-layout {
+  min-height: 100vh;
+  background: #fafafa;
+  padding-top: 64px; /* 为固定导航栏留出空间 */
+}
+
+.philosophy-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.philosophy-nav .nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  gap: 2rem;
+}
+
+.philosophy-nav .nav-logo {
+  color: #111827;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.125rem;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.philosophy-nav .nav-logo:hover {
+  color: #4b5563;
+}
+
+.philosophy-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.philosophy-nav .nav-link {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.philosophy-nav .nav-link:hover {
+  color: #111827;
+}
+
+.philosophy-nav .nav-link.active {
+  color: #111827;
+  font-weight: 600;
+}
+
+.philosophy-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #111827;
+}
+
+.philosophy-nav .nav-search {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 200px;
+}
+
+.philosophy-nav .nav-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #9ca3af;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.philosophy-nav .nav-search-input {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+  height: 2.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background: #f9fafb;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.philosophy-nav .nav-search-input:focus {
+  outline: none;
+  border-color: #d1d5db;
+  background: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .philosophy-nav .nav-container {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
+  }
+
+  .philosophy-nav .nav-links {
+    gap: 1rem;
+  }
+
+  .philosophy-nav .nav-search {
+    min-width: 150px;
+  }
+}
+
+/* 三栏布局容器 */
+.philosophy-container {
+  display: grid;
+  grid-template-columns: 240px 1fr 240px;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 1024px) {
+  .philosophy-container {
+    grid-template-columns: 200px 1fr 200px;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .philosophy-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .philosophy-sidebar-left,
+  .philosophy-sidebar-right {
+    display: none;
+  }
+}
+
+/* 左侧导航菜单 */
+.philosophy-sidebar-left {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+.philosophy-sidebar-left::-webkit-scrollbar {
+  width: 6px;
+}
+
+.philosophy-sidebar-left::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.philosophy-sidebar-left::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.philosophy-sidebar-left::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.philosophy-sidebar-nav {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item-header {
+  display: flex;
+  align-items: center;
+}
+
+.nav-item-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.nav-item-toggle .nav-item-title {
+  flex: 1;
+}
+
+.nav-item-toggle:hover {
+  background: var(--muted);
+}
+
+.nav-item-toggle.expanded .nav-item-icon {
+  transform: rotate(90deg);
+}
+
+.nav-item-icon {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  color: var(--muted-foreground);
+  margin-left: auto;
+}
+
+.nav-item-title {
+  font-weight: 500;
+}
+
+.nav-item-link {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.nav-item-link:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.nav-item-link.active {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+}
+
+.nav-item-level-1 .nav-item-title,
+.nav-item-level-1 .nav-item-link {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.nav-item-level-2 {
+  padding-left: 1rem;
+}
+
+.nav-item-level-2 .nav-item-title,
+.nav-item-level-2 .nav-item-link {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.nav-item-level-3 {
+  padding-left: 2rem;
+}
+
+.nav-item-level-3 .nav-item-title,
+.nav-item-level-3 .nav-item-link {
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.nav-item-children {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.25rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--border);
+}
+
+/* 中间内容区域 */
+.philosophy-content {
+  min-width: 0;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+}
+
+.philosophy-page-content {
+  max-width: 100%;
+}
+
+.philosophy-detail {
+  max-width: 100%;
+}
+
+.philosophy-detail h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.philosophy-section {
+  margin-bottom: 3rem;
+}
+
+.philosophy-section {
+  /* 防止锚点被顶部固定导航遮住 */
+  scroll-margin-top: 96px;
+}
+
+.philosophy-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #111827;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.philosophy-section:first-of-type h2 {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+}
+
+.philosophy-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.philosophy-section p {
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.philosophy-section .original-text {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #111827;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.course-list,
+.category-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.course-card,
+.category-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.course-card:hover,
+.category-item:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border-color: var(--ring);
+}
+
+.course-card h3,
+.category-item h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.course-card .status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.course-card .status.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.category-item p {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+/* 详情页笔记列表 */
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.note-card {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.note-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border-color: #d1d5db;
+}
+
+.note-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #111827;
+}
+
+.note-card .note-original-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+.note-card .note-author {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* 文章列表与卡片（分类页） */
+.article-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.article-card {
+  display: block;
+  text-decoration: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.article-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border-color: var(--ring);
+  transform: translateY(-1px);
+}
+
+.article-card-cover {
+  width: 100%;
+  display: block;
+  background: #f3f4f6;
+}
+
+.article-card-content {
+  padding: 1rem 1rem 1.25rem;
+}
+
+.article-card-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.0625rem;
+  color: var(--foreground);
+}
+
+.article-card-excerpt {
+  margin: 0.5rem 0 0.75rem 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.article-card-meta {
+  display: flex;
+  gap: 0.75rem;
+  color: #9ca3af;
+  font-size: 0.8125rem;
+}
+
+/* 分类页与笔记页正文撑开 */
+.category-page {
+  width: 100%;
+}
+
+.note-detail {
+  width: 100%;
+}
+
+.note-detail .content {
+  width: 100%;
+}
+
+/* 右侧目录 */
+.philosophy-sidebar-right {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+.philosophy-sidebar-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.philosophy-sidebar-right::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.philosophy-sidebar-right::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.philosophy-sidebar-right::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.philosophy-toc {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.toc-header h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toc-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.toc-empty {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toc-item {
+  display: flex;
+}
+
+.toc-link {
+  display: block;
+  padding: 0.375rem 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: color 0.2s, background-color 0.2s;
+  border-radius: calc(var(--radius) - 2px);
+  width: 100%;
+}
+
+.toc-link:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.toc-item-level-1 .toc-link {
+  font-weight: 600;
+  padding-left: 0.5rem;
+}
+
+.toc-item-level-2 .toc-link {
+  font-weight: 400;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+}
+
+.toc-item-level-3 .toc-link {
+  font-weight: 400;
+  padding-left: 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* 笔记详情页 */
+.note-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.note-detail {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.note-detail h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.note-detail .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9375rem;
+  color: #6b7280;
+}
+
+.note-detail .meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.note-detail .meta span::before {
+  content: "•";
+  color: #d1d5db;
+  font-weight: bold;
+}
+
+.note-detail .meta a {
+  color: #6366f1;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.note-detail .meta a::before {
+  content: "🔗";
+  font-size: 0.875rem;
+}
+
+.note-detail .meta a:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.note-detail .content {
+  line-height: 1.85;
+  color: #374151;
+}
+
+.note-detail .content p {
+  margin-bottom: 1.5rem;
+  font-size: 1.0625rem;
+}
+
+.note-detail .content ul,
+.note-detail .content ol {
+  margin: 1rem 0 1.5rem 2rem;
+  padding: 0;
+}
+
+.note-detail .content li {
+  margin-bottom: 0.75rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 1024px) {
+  .note-detail-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .philosophy-sidebar-right {
+    display: none;
+  }
+}

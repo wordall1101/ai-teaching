@@ -1,7 +1,10 @@
 import type { InferSelectModel } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   foreignKey,
+  index,
+  integer,
   json,
   jsonb,
   pgTable,
@@ -171,3 +174,98 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+// Philosophy-related tables
+
+export const category = pgTable(
+  "Category",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    // 父级分类ID，为null表示顶级分类
+    parentId: uuid("parentId").references((): AnyPgColumn => category.id),
+    title: varchar("title", { length: 100 }).notNull(),
+    description: text("description"),
+    order: integer("order").notNull().default(0),
+    // 层级深度，0=顶级，1=二级，2=三级...
+    level: integer("level").notNull().default(0),
+    // 路径字段，便于快速查询整个层级链
+    path: text("path"),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      // 父级索引
+      parentIdx: index("category_parent_idx").on(table.parentId),
+      // 路径索引
+      pathIdx: index("category_path_idx").on(table.path),
+    };
+  }
+);
+
+export type Category = InferSelectModel<typeof category>;
+
+export const article = pgTable("Article", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  categoryId: uuid("categoryId")
+    .notNull()
+    .references(() => category.id),
+  title: varchar("title", { length: 200 }).notNull(),
+  slug: varchar("slug", { length: 200 }).notNull(),
+  coverImage: varchar("coverImage", { length: 500 }),
+  excerpt: text("excerpt"),
+  original: text("original"),
+  historical: text("historical"),
+  translation: text("translation"),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
+
+export type Article = InferSelectModel<typeof article>;
+
+export const course = pgTable("Course", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  coverImage: varchar("coverImage", { length: 500 }),
+  status: varchar("status", { enum: ["upcoming", "ongoing", "completed"] })
+    .notNull()
+    .default("upcoming"),
+  categoryId: uuid("categoryId").references(() => category.id),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
+
+export type Course = InferSelectModel<typeof course>;
+
+export const tocItem = pgTable("TocItem", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  entityType: varchar("entityType", { length: 50 }).notNull(),
+  entityId: uuid("entityId").notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  anchorId: varchar("anchorId", { length: 200 }).notNull(),
+  level: integer("level").notNull().default(1),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export type TocItem = InferSelectModel<typeof tocItem>;
+
+export const note = pgTable("Note", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  articleId: uuid("articleId")
+    .notNull()
+    .references(() => article.id),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => user.id),
+  title: varchar("title", { length: 200 }).notNull(),
+  content: text("content"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
+
+export type Note = InferSelectModel<typeof note>;
