@@ -13,9 +13,9 @@ import { getStreamContext } from "../../route";
 
 export async function GET(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id: chatId } = params;
+  const { id: chatId } = await params;
 
   const streamContext = getStreamContext();
   const resumeRequestedAt = new Date();
