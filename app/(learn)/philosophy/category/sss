@@ -1,4 +1,4 @@
-// app/philosophy/page.tsx
+<!-- // app/philosophy/page.tsx
 import Link from "next/link";
 import {
   CategoryService,
@@ -101,4 +101,4 @@ export default async function PhilosophyPage() {
       </aside>
     </div>
   );
-}
+} -->

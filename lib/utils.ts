@@ -166,13 +166,14 @@ export function getCourseStatusClass(status: string): string {
 // 获取分类的完整路径（面包屑）
 export function getCategoryPath(categories: Category[], categoryId: string): Category[] {
   const path: Category[] = [];
-  let currentCategory = categories.find(cat => cat.id === categoryId);
+  let currentId: string | null = categoryId;
   
-  while (currentCategory) {
-    path.unshift(currentCategory);
-    currentCategory = currentCategory.parentId 
-      ? categories.find(cat => cat.id === currentCategory.parentId)
-      : null;
+  while (currentId) {
+    const category = categories.find(cat => cat.id === currentId);
+    if (!category) break;
+    
+    path.unshift(category);
+    currentId = category.parentId;
   }
   
   return path;
