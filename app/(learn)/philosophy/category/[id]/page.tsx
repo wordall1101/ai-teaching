@@ -11,17 +11,16 @@ import { buildCategoryTree } from "@/lib/utils";
 import { PromotionContent } from "../../components/promotion-content";
 import { SidebarNav } from "../../components/sidebar-nav";
 
-type CategoryPageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   // 获取当前分类信息
   let currentCategory: Category = {} as Category;
   try {
-    const directCategory = await CategoryService.findById(params.id);
+    const directCategory = await CategoryService.findById(id);
     if (directCategory) {
       currentCategory = directCategory;
     }
@@ -56,7 +55,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   let articles: Article[] = [];
   try {
     // 首先获取当前分类的所有直接文章
-    const directArticles = await ArticleService.findByCategoryId(params.id);
+    const directArticles = await ArticleService.findByCategoryId(id);
     articles = [...directArticles];
   } catch (error) {
     console.error("Failed to load articles:", error);

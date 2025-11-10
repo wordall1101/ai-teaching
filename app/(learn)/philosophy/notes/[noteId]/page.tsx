@@ -8,14 +8,13 @@ import {
 } from "@/lib/db/repositories/db-service";
 import { TableOfContents } from "../../components/table-of-contents";
 
-type NoteDetailPageProps = {
-  params: {
-    noteId: string;
-  };
-};
-
-export default async function NoteDetailPage({ params }: NoteDetailPageProps) {
-  const note = await NoteService.findById(params.noteId);
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const note = await NoteService.findById(id);
   if (!note) {
     return (
       <div className="note-detail-container">

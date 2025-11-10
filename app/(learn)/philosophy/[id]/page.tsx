@@ -11,15 +11,12 @@ import { buildCategoryTree } from "@/lib/utils";
 import { SidebarNav } from "../components/sidebar-nav";
 import { TableOfContents } from "../components/table-of-contents";
 
-type PhilosophyDetailPageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function PhilosophyDetailPage({
+export default async function Page({
   params,
-}: PhilosophyDetailPageProps) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   // 左侧导航
   let navItems: any[] = [];
   try {
@@ -30,7 +27,7 @@ export default async function PhilosophyDetailPage({
   }
 
   // 文章详情
-  const article = await ArticleService.findById(params.id);
+  const article = await ArticleService.findById(id);
   if (!article) {
     return (
       <>

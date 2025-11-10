@@ -8,15 +8,12 @@ import { buildCategoryTree } from "@/lib/utils";
 import { SidebarNav } from "../../components/sidebar-nav";
 import { TableOfContents } from "../../components/table-of-contents";
 
-type CourseDetailPageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function CourseDetailPage({
+export default async function Page({
   params,
-}: CourseDetailPageProps) {
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   // 左侧导航
   let navItems: any[] = [];
   try {
@@ -26,7 +23,7 @@ export default async function CourseDetailPage({
     navItems = [];
   }
 
-  const course = await CourseService.findById(params.id);
+  const course = await CourseService.findById(id);
   if (!course) {
     return (
       <>
