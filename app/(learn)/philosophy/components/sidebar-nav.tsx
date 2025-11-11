@@ -60,7 +60,8 @@ export function SidebarNav({ items }: SidebarNavProps) {
 
   // 根据活动项自动展开父级目录
   useEffect(() => {
-    const newExpanded = new Set();
+    // 修复类型错误：明确指定 Set 的泛型类型为 string
+    const newExpanded = new Set<string>();
 
     // 始终展开一级节点
     items.forEach((item) => {
