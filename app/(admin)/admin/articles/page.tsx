@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,11 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ArticleService, CategoryService } from "@/lib/db/repositories/db-service";
-import type { Article, Category } from "@/lib/db/schema";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArticleService,
+  CategoryService,
+} from "@/lib/db/repositories/db-service";
+import type { Category } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 import {
   createArticleAction,
@@ -21,7 +23,7 @@ import {
 } from "./actions";
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 function formatDate(value: Date | string | null | undefined) {
@@ -51,13 +53,14 @@ function getCategoryTitle(categories: Category[], id: string) {
 }
 
 export default async function ArticlesPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const status = (resolvedSearchParams?.status as string | undefined) ?? "";
+  const message = (resolvedSearchParams?.message as string | undefined) ?? "";
+
   const [categories, articles] = await Promise.all([
     CategoryService.findAll(),
     ArticleService.findAll(),
   ]);
-
-  const status = (searchParams?.status as string | undefined) ?? "";
-  const message = (searchParams?.message as string | undefined) ?? "";
 
   return (
     <div className="space-y-8 p-6">
@@ -69,7 +72,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
           </p>
         </div>
         <Link
-          className="text-muted-foreground text-sm hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground"
           href="/philosophy"
         >
           查看前台展示
@@ -99,7 +102,10 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createArticleAction} className="grid gap-4 md:grid-cols-2">
+          <form
+            action={createArticleAction}
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="title">标题</Label>
               <Input
@@ -118,8 +124,8 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                 maxLength={200}
                 minLength={1}
                 name="slug"
-                placeholder="例如 university-way"
                 pattern="[a-z0-9-]+"
+                placeholder="例如 university-way"
                 required
               />
               <p className="text-muted-foreground text-xs">
@@ -229,31 +235,41 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
               <tbody>
                 {articles.length === 0 ? (
                   <tr>
-                    <td className="p-4 text-center text-muted-foreground" colSpan={7}>
+                    <td
+                      className="p-4 text-center text-muted-foreground"
+                      colSpan={7}
+                    >
                       暂无文章数据，先在上方创建一篇文章。
                     </td>
                   </tr>
                 ) : (
                   articles.map((article) => (
                     <tr className="border-b last:border-b-0" key={article.id}>
-                      <td className="align-top p-3 font-medium">{article.title}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top font-medium">
+                        {article.title}
+                      </td>
+                      <td className="p-3 align-top">
                         <code className="rounded bg-muted px-2 py-1 text-xs">
                           {article.slug}
                         </code>
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         {getCategoryTitle(categories, article.categoryId)}
                       </td>
-                      <td className="align-top p-3">{article.order}</td>
-                      <td className="align-top p-3">{formatDate(article.updatedAt)}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">{article.order}</td>
+                      <td className="p-3 align-top">
+                        {formatDate(article.updatedAt)}
+                      </td>
+                      <td className="p-3 align-top">
                         <p className="line-clamp-4 text-muted-foreground text-xs leading-relaxed">
                           {article.excerpt ?? "—"}
                         </p>
                       </td>
-                      <td className="align-top p-3">
-                        <details className="rounded border bg-muted/40 p-3" role="group">
+                      <td className="p-3 align-top">
+                        <details
+                          className="rounded border bg-muted/40 p-3"
+                          role="group"
+                        >
                           <summary className="cursor-pointer font-medium">
                             编辑
                           </summary>
@@ -263,7 +279,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                           >
                             <input name="id" type="hidden" value={article.id} />
                             <div className="space-y-2">
-                              <Label htmlFor={`title-${article.id}`}>标题</Label>
+                              <Label htmlFor={`title-${article.id}`}>
+                                标题
+                              </Label>
                               <Input
                                 defaultValue={article.title}
                                 id={`title-${article.id}`}
@@ -284,7 +302,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`category-${article.id}`}>分类</Label>
+                              <Label htmlFor={`category-${article.id}`}>
+                                分类
+                              </Label>
                               <select
                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 defaultValue={article.categoryId}
@@ -300,7 +320,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`order-${article.id}`}>排序</Label>
+                              <Label htmlFor={`order-${article.id}`}>
+                                排序
+                              </Label>
                               <Input
                                 defaultValue={article.order}
                                 id={`order-${article.id}`}
@@ -310,7 +332,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`cover-${article.id}`}>封面地址</Label>
+                              <Label htmlFor={`cover-${article.id}`}>
+                                封面地址
+                              </Label>
                               <Input
                                 defaultValue={article.coverImage ?? ""}
                                 id={`cover-${article.id}`}
@@ -319,7 +343,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`excerpt-${article.id}`}>摘要</Label>
+                              <Label htmlFor={`excerpt-${article.id}`}>
+                                摘要
+                              </Label>
                               <Textarea
                                 defaultValue={article.excerpt ?? ""}
                                 id={`excerpt-${article.id}`}
@@ -329,7 +355,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`original-${article.id}`}>原文</Label>
+                              <Label htmlFor={`original-${article.id}`}>
+                                原文
+                              </Label>
                               <Textarea
                                 defaultValue={article.original ?? ""}
                                 id={`original-${article.id}`}
@@ -338,7 +366,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`historical-${article.id}`}>历史背景</Label>
+                              <Label htmlFor={`historical-${article.id}`}>
+                                历史背景
+                              </Label>
                               <Textarea
                                 defaultValue={article.historical ?? ""}
                                 id={`historical-${article.id}`}
@@ -347,7 +377,9 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`translation-${article.id}`}>译文</Label>
+                              <Label htmlFor={`translation-${article.id}`}>
+                                译文
+                              </Label>
                               <Textarea
                                 defaultValue={article.translation ?? ""}
                                 id={`translation-${article.id}`}
@@ -360,7 +392,10 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
                             </div>
                           </form>
                         </details>
-                        <form action={deleteArticleAction} className="mt-3 inline-block">
+                        <form
+                          action={deleteArticleAction}
+                          className="mt-3 inline-block"
+                        >
                           <input name="id" type="hidden" value={article.id} />
                           <Button type="submit" variant="destructive">
                             删除
@@ -378,4 +413,3 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
     </div>
   );
 }
-
