@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/auth/permissions";
@@ -100,7 +100,6 @@ export async function createTocItemAction(formData: FormData) {
     await assertEntityExists(parsed.entityType, parsed.entityId);
 
     await TocItemService.create({
-      id: generateUUID(),
       entityType: parsed.entityType,
       entityId: parsed.entityId,
       title: parsed.title,
@@ -113,7 +112,12 @@ export async function createTocItemAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "目录项创建成功"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -151,7 +155,12 @@ export async function updateTocItemAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "目录项已更新"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -174,7 +183,12 @@ export async function deleteTocItemAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "目录项已删除"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -182,4 +196,3 @@ export async function deleteTocItemAction(formData: FormData) {
     redirect(buildRedirectUrl("error", "删除目录项时发生未知错误"));
   }
 }
-

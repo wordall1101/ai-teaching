@@ -8,6 +8,7 @@ import {
   TocItemService,
 } from "@/lib/db/repositories/db-service";
 import { buildCategoryTree } from "@/lib/utils";
+import { PromotionContent } from "../components/promotion-content";
 import { SidebarNav } from "../components/sidebar-nav";
 import { TableOfContents } from "../components/table-of-contents";
 
@@ -119,7 +120,12 @@ export default async function Page({
       </main>
 
       <aside className="philosophy-sidebar-right">
-        <TableOfContents items={toc} />
+        <div className="philosophy-sidebar-stack">
+          <div className="philosophy-toc">
+            <TableOfContents items={toc} />
+          </div>
+          <PromotionContent />
+        </div>
       </aside>
     </div>
   );

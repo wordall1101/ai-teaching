@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/auth/permissions";
@@ -19,11 +19,7 @@ const createCategorySchema = z.object({
     .max(500, "分类描述需在500字符以内")
     .optional()
     .nullable(),
-  parentId: z
-    .string()
-    .uuid("父级分类格式不正确")
-    .optional()
-    .nullable(),
+  parentId: z.string().uuid("父级分类格式不正确").optional().nullable(),
   order: z.coerce
     .number({ invalid_type_error: "排序值必须是数字" })
     .int("排序值必须是整数")
@@ -114,7 +110,9 @@ export async function updateCategoryAction(formData: FormData) {
     if (parsed.parentId) {
       const current = await CategoryService.findById(parsed.id);
       if (current?.parentId !== parsed.parentId) {
-        redirect(buildRedirectUrl("error", "暂不支持调整分类层级，请创建新的分类"));
+        redirect(
+          buildRedirectUrl("error", "暂不支持调整分类层级，请创建新的分类")
+        );
       }
     }
 
@@ -188,4 +186,3 @@ export async function deleteCategoryAction(formData: FormData) {
     redirect(buildRedirectUrl("error", "删除分类时发生未知错误"));
   }
 }
-

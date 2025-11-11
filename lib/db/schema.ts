@@ -1,4 +1,4 @@
-import type { InferSelectModel } from "drizzle-orm";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import {
   type AnyPgColumn,
   boolean,
@@ -205,6 +205,7 @@ export const category = pgTable(
 );
 
 export type Category = InferSelectModel<typeof category>;
+export type NewCategory = InferInsertModel<typeof category>;
 
 export const article = pgTable("Article", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -224,6 +225,7 @@ export const article = pgTable("Article", {
 });
 
 export type Article = InferSelectModel<typeof article>;
+export type NewArticle = InferInsertModel<typeof article>;
 
 export const course = pgTable("Course", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -241,6 +243,7 @@ export const course = pgTable("Course", {
 });
 
 export type Course = InferSelectModel<typeof course>;
+export type NewCourse = InferInsertModel<typeof course>;
 
 export const tocItem = pgTable("TocItem", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -254,6 +257,7 @@ export const tocItem = pgTable("TocItem", {
 });
 
 export type TocItem = InferSelectModel<typeof tocItem>;
+export type NewTocItem = InferInsertModel<typeof tocItem>;
 
 export const note = pgTable("Note", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -270,3 +274,4 @@ export const note = pgTable("Note", {
 });
 
 export type Note = InferSelectModel<typeof note>;
+export type NewNote = InferInsertModel<typeof note>;

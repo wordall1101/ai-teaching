@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/auth/permissions";
@@ -50,11 +50,7 @@ const baseCourseSchema = z.object({
   status: z.enum(courseStatus, {
     errorMap: () => ({ message: "课程状态不合法" }),
   }),
-  categoryId: z
-    .string()
-    .uuid("请选择有效的分类")
-    .optional()
-    .or(z.literal("")),
+  categoryId: z.string().uuid("请选择有效的分类").optional().or(z.literal("")),
   startDate: dateSchema,
   endDate: dateSchema,
 });
@@ -105,16 +101,15 @@ export async function createCourseAction(formData: FormData) {
       }
     }
 
-    if (parsed.startDate && parsed.endDate) {
-      if (parsed.startDate.getTime() > parsed.endDate.getTime()) {
-        redirect(
-          buildRedirectUrl("error", "开始日期不能晚于结束日期")
-        );
-      }
+    if (
+      parsed.startDate &&
+      parsed.endDate &&
+      parsed.startDate.getTime() > parsed.endDate.getTime()
+    ) {
+      redirect(buildRedirectUrl("error", "开始日期不能晚于结束日期"));
     }
 
     await CourseService.create({
-      id: generateUUID(),
       title: parsed.title,
       description: parsed.description || null,
       coverImage: parsed.coverImage || null,
@@ -128,7 +123,12 @@ export async function createCourseAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "课程创建成功"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -159,12 +159,12 @@ export async function updateCourseAction(formData: FormData) {
       }
     }
 
-    if (parsed.startDate && parsed.endDate) {
-      if (parsed.startDate.getTime() > parsed.endDate.getTime()) {
-        redirect(
-          buildRedirectUrl("error", "开始日期不能晚于结束日期")
-        );
-      }
+    if (
+      parsed.startDate &&
+      parsed.endDate &&
+      parsed.startDate.getTime() > parsed.endDate.getTime()
+    ) {
+      redirect(buildRedirectUrl("error", "开始日期不能晚于结束日期"));
     }
 
     await CourseService.update(parsed.id, {
@@ -181,7 +181,12 @@ export async function updateCourseAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "课程信息已更新"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -204,7 +209,12 @@ export async function deleteCourseAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "课程已删除"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -212,4 +222,3 @@ export async function deleteCourseAction(formData: FormData) {
     redirect(buildRedirectUrl("error", "删除课程时发生未知错误"));
   }
 }
-

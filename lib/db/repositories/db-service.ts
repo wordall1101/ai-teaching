@@ -6,6 +6,11 @@ import {
   type Course,
   category,
   course,
+  type NewArticle,
+  type NewCategory,
+  type NewCourse,
+  type NewNote,
+  type NewTocItem,
   type Note,
   note,
   type TocItem,
@@ -18,7 +23,7 @@ import { db } from "./index";
 // Category 相关操作
 export const CategoryService = {
   // 创建分类
-  async create(data: Category): Promise<Category> {
+  async create(data: NewCategory): Promise<Category> {
     const [result] = await db.insert(category).values(data).returning();
     return result;
   },
@@ -110,7 +115,7 @@ export const UserService = {
 // Article 相关操作
 export const ArticleService = {
   // 创建文章
-  async create(data: Article): Promise<Article> {
+  async create(data: NewArticle): Promise<Article> {
     const [result] = await db.insert(article).values(data).returning();
     return result;
   },
@@ -174,7 +179,7 @@ export const ArticleService = {
 // Course 相关操作
 export const CourseService = {
   // 创建课程
-  async create(data: Course): Promise<Course> {
+  async create(data: NewCourse): Promise<Course> {
     const [result] = await db.insert(course).values(data).returning();
     return result;
   },
@@ -229,7 +234,7 @@ export const CourseService = {
 // TocItem 相关操作
 export const TocItemService = {
   // 创建目录项
-  async create(data: TocItem): Promise<TocItem> {
+  async create(data: NewTocItem): Promise<TocItem> {
     const [result] = await db.insert(tocItem).values(data).returning();
     return result;
   },
@@ -291,7 +296,7 @@ export const TocItemService = {
 // Note 相关操作
 export const NoteService = {
   // 创建笔记
-  async create(data: Note): Promise<Note> {
+  async create(data: NewNote): Promise<Note> {
     const [result] = await db.insert(note).values(data).returning();
     return result;
   },

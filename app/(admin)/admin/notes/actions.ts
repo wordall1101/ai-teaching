@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/auth/permissions";
@@ -64,7 +64,6 @@ export async function createNoteAction(formData: FormData) {
     }
 
     await NoteService.create({
-      id: generateUUID(),
       articleId: parsed.articleId,
       userId: parsed.userId,
       title: parsed.title,
@@ -75,7 +74,12 @@ export async function createNoteAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "笔记创建成功"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -125,7 +129,12 @@ export async function updateNoteAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "笔记已更新"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -148,7 +157,12 @@ export async function deleteNoteAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "笔记已删除"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -156,4 +170,3 @@ export async function deleteNoteAction(formData: FormData) {
     redirect(buildRedirectUrl("error", "删除笔记时发生未知错误"));
   }
 }
-

@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAdminSession } from "@/lib/auth/permissions";
@@ -89,10 +89,7 @@ export async function createArticleAction(formData: FormData) {
       redirect(buildRedirectUrl("error", "Slug 已存在，请更换后重试"));
     }
 
-    const id = generateUUID();
-
     await ArticleService.create({
-      id,
       categoryId: parsed.categoryId,
       title: parsed.title,
       slug: parsed.slug,
@@ -108,7 +105,12 @@ export async function createArticleAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "文章创建成功"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -167,7 +169,12 @@ export async function updateArticleAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "文章已更新"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -205,7 +212,12 @@ export async function deleteArticleAction(formData: FormData) {
     redirect(buildRedirectUrl("success", "文章已删除"));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      redirect(buildRedirectUrl("error", error.errors.at(0)?.message ?? "提交参数不合法"));
+      redirect(
+        buildRedirectUrl(
+          "error",
+          error.errors.at(0)?.message ?? "提交参数不合法"
+        )
+      );
     }
     if (error instanceof Error) {
       redirect(buildRedirectUrl("error", error.message));
@@ -213,4 +225,3 @@ export async function deleteArticleAction(formData: FormData) {
     redirect(buildRedirectUrl("error", "删除文章时发生未知错误"));
   }
 }
-
