@@ -56,7 +56,7 @@ export default async function Page({
       title: t.title,
       level: t.level,
     })),
-    { id: "notes", title: "学生心得", level: 2 },
+    { id: "notes", title: "学习心得", level: 2 },
   ];
 
   // 相关笔记
@@ -74,7 +74,6 @@ export default async function Page({
 
           {article.original ? (
             <section className="philosophy-section" id="original">
-              <h2>原文</h2>
               <Streamdown>{article.original || ""}</Streamdown>
             </section>
           ) : null}
@@ -94,7 +93,7 @@ export default async function Page({
           ) : null}
 
           <section className="philosophy-section" id="notes">
-            <h2>学生心得</h2>
+            <h2>学习心得</h2>
             <div className="note-list">
               {notes.length === 0 ? (
                 <div className="note-card">

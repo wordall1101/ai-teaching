@@ -53,11 +53,17 @@ export async function getUser(email: string): Promise<User[]> {
   }
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(
+  email: string,
+  password: string,
+  role: "guest" | "regular" | "admin" = "regular"
+) {
   const hashedPassword = generateHashedPassword(password);
 
   try {
-    return await db.insert(user).values({ email, password: hashedPassword });
+    return await db
+      .insert(user)
+      .values({ email, password: hashedPassword, role });
   } catch (_error) {
     throw new ChatSDKError("bad_request:database", "Failed to create user");
   }
@@ -68,10 +74,14 @@ export async function createGuestUser() {
   const password = generateHashedPassword(generateUUID());
 
   try {
-    return await db.insert(user).values({ email, password }).returning({
-      id: user.id,
-      email: user.email,
-    });
+    return await db
+      .insert(user)
+      .values({ email, password, role: "guest" })
+      .returning({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      });
   } catch (_error) {
     throw new ChatSDKError(
       "bad_request:database",
@@ -134,7 +144,7 @@ export async function deleteAllChatsByUserId({ userId }: { userId: string }) {
       return { deletedCount: 0 };
     }
 
-    const chatIds = userChats.map(c => c.id);
+    const chatIds = userChats.map((c) => c.id);
 
     await db.delete(vote).where(inArray(vote.chatId, chatIds));
     await db.delete(message).where(inArray(message.chatId, chatIds));

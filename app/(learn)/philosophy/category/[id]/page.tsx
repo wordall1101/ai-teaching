@@ -130,7 +130,7 @@ function ArticleCard({ article }: { article: any }) {
           <p className="article-card-excerpt">{article.excerpt}</p>
         )}
         <div className="article-card-meta">
-          <span className="article-order">第 {article.order + 1} 章</span>
+          {/* <span className="article-order">第 {article.order + 1} 章</span> */}
           {article.createdAt && (
             <span className="article-date">
               {new Date(article.createdAt).toLocaleDateString("zh-CN")}

@@ -10,6 +10,8 @@ import {
   note,
   type TocItem,
   tocItem,
+  type User,
+  user,
 } from "../schema";
 import { db } from "./index";
 
@@ -88,6 +90,20 @@ export const CategoryService = {
     };
 
     return buildTree(allCategories);
+  },
+};
+
+// User 相关操作
+export const UserService = {
+  async findAll(): Promise<Pick<User, "id" | "email" | "role">[]> {
+    return await db
+      .select({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      })
+      .from(user)
+      .orderBy(asc(user.email));
   },
 };
 
@@ -216,6 +232,19 @@ export const TocItemService = {
   async create(data: TocItem): Promise<TocItem> {
     const [result] = await db.insert(tocItem).values(data).returning();
     return result;
+  },
+
+  // 获取所有目录项
+  async findAll(): Promise<TocItem[]> {
+    return await db
+      .select()
+      .from(tocItem)
+      .orderBy(
+        asc(tocItem.entityType),
+        asc(tocItem.entityId),
+        asc(tocItem.level),
+        asc(tocItem.order)
+      );
   },
 
   // 批量创建目录项
