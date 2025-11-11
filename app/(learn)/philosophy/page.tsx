@@ -19,7 +19,17 @@ export default async function PhilosophyPage() {
   let navItems: any[] = [];
   try {
     const categories = await CategoryService.findAll();
+    // 添加调试日志
+    console.log(
+      "CategoryService.findAll() 返回的数据:",
+      JSON.stringify(categories, null, 2)
+    );
+    console.log("数据条数:", categories.length);
+
     navItems = buildCategoryTree(categories);
+
+    // 检查构建后的树结构
+    console.log("构建后的导航树:", JSON.stringify(navItems, null, 2));
   } catch {
     navItems = [];
   }
