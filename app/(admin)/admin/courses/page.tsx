@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,14 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   CategoryService,
   CourseService,
 } from "@/lib/db/repositories/db-service";
-import type { Category, Course } from "@/lib/db/schema";
+import type { Course } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 import {
   createCourseAction,
@@ -24,7 +23,7 @@ import {
 } from "./actions";
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const statusLabels: Record<Course["status"], string> = {
@@ -71,8 +70,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
     CourseService.findAll(),
   ]);
 
-  const status = (searchParams?.status as string | undefined) ?? "";
-  const message = (searchParams?.message as string | undefined) ?? "";
+  const resolvedSearchParams = await searchParams;
+  const status = (resolvedSearchParams?.status as string | undefined) ?? "";
+  const message = (resolvedSearchParams?.message as string | undefined) ?? "";
 
   return (
     <div className="space-y-8 p-6">
@@ -84,7 +84,7 @@ export default async function CoursesPage({ searchParams }: PageProps) {
           </p>
         </div>
         <Link
-          className="text-muted-foreground text-sm hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground"
           href="/philosophy"
         >
           查看前台展示
@@ -114,7 +114,10 @@ export default async function CoursesPage({ searchParams }: PageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createCourseAction} className="grid gap-4 md:grid-cols-2">
+          <form
+            action={createCourseAction}
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="title">课程标题</Label>
               <Input
@@ -214,37 +217,48 @@ export default async function CoursesPage({ searchParams }: PageProps) {
               <tbody>
                 {courses.length === 0 ? (
                   <tr>
-                    <td className="p-4 text-center text-muted-foreground" colSpan={7}>
+                    <td
+                      className="p-4 text-center text-muted-foreground"
+                      colSpan={7}
+                    >
                       暂无课程数据。
                     </td>
                   </tr>
                 ) : (
                   courses.map((course) => (
                     <tr className="border-b last:border-b-0" key={course.id}>
-                      <td className="align-top p-3 font-medium">{course.title}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top font-medium">
+                        {course.title}
+                      </td>
+                      <td className="p-3 align-top">
                         {statusLabels[course.status] ?? course.status}
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         {course.categoryId
-                          ? categories.find((item) => item.id === course.categoryId)?.title ??
-                            "已删除"
+                          ? (categories.find(
+                              (item) => item.id === course.categoryId
+                            )?.title ?? "已删除")
                           : "未关联"}
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         <div className="space-y-1">
                           <p>开始：{formatDateTime(course.startDate)}</p>
                           <p>结束：{formatDateTime(course.endDate)}</p>
                         </div>
                       </td>
-                      <td className="align-top p-3">{formatDateTime(course.updatedAt)}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
+                        {formatDateTime(course.updatedAt)}
+                      </td>
+                      <td className="p-3 align-top">
                         <p className="line-clamp-4 text-muted-foreground text-xs leading-relaxed">
                           {course.description ?? "—"}
                         </p>
                       </td>
-                      <td className="align-top p-3">
-                        <details className="rounded border bg-muted/40 p-3" role="group">
+                      <td className="p-3 align-top">
+                        <details
+                          className="rounded border bg-muted/40 p-3"
+                          role="group"
+                        >
                           <summary className="cursor-pointer font-medium">
                             编辑
                           </summary>
@@ -254,7 +268,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                           >
                             <input name="id" type="hidden" value={course.id} />
                             <div className="space-y-2">
-                              <Label htmlFor={`title-${course.id}`}>课程标题</Label>
+                              <Label htmlFor={`title-${course.id}`}>
+                                课程标题
+                              </Label>
                               <Input
                                 defaultValue={course.title}
                                 id={`title-${course.id}`}
@@ -264,7 +280,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`status-${course.id}`}>课程状态</Label>
+                              <Label htmlFor={`status-${course.id}`}>
+                                课程状态
+                              </Label>
                               <select
                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 defaultValue={course.status}
@@ -272,15 +290,19 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                                 name="status"
                                 required
                               >
-                                {Object.entries(statusLabels).map(([value, label]) => (
-                                  <option key={value} value={value}>
-                                    {label}
-                                  </option>
-                                ))}
+                                {Object.entries(statusLabels).map(
+                                  ([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  )
+                                )}
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`category-${course.id}`}>分类</Label>
+                              <Label htmlFor={`category-${course.id}`}>
+                                分类
+                              </Label>
                               <select
                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 defaultValue={course.categoryId ?? ""}
@@ -296,7 +318,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`cover-${course.id}`}>封面地址</Label>
+                              <Label htmlFor={`cover-${course.id}`}>
+                                封面地址
+                              </Label>
                               <Input
                                 defaultValue={course.coverImage ?? ""}
                                 id={`cover-${course.id}`}
@@ -305,7 +329,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`start-${course.id}`}>开始日期</Label>
+                              <Label htmlFor={`start-${course.id}`}>
+                                开始日期
+                              </Label>
                               <Input
                                 defaultValue={formatDateInput(course.startDate)}
                                 id={`start-${course.id}`}
@@ -314,7 +340,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`end-${course.id}`}>结束日期</Label>
+                              <Label htmlFor={`end-${course.id}`}>
+                                结束日期
+                              </Label>
                               <Input
                                 defaultValue={formatDateInput(course.endDate)}
                                 id={`end-${course.id}`}
@@ -323,7 +351,9 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`description-${course.id}`}>课程简介</Label>
+                              <Label htmlFor={`description-${course.id}`}>
+                                课程简介
+                              </Label>
                               <Textarea
                                 defaultValue={course.description ?? ""}
                                 id={`description-${course.id}`}
@@ -337,7 +367,10 @@ export default async function CoursesPage({ searchParams }: PageProps) {
                             </div>
                           </form>
                         </details>
-                        <form action={deleteCourseAction} className="mt-3 inline-block">
+                        <form
+                          action={deleteCourseAction}
+                          className="mt-3 inline-block"
+                        >
                           <input name="id" type="hidden" value={course.id} />
                           <Button type="submit" variant="destructive">
                             删除
@@ -355,4 +388,3 @@ export default async function CoursesPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

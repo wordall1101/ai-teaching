@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,9 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   ArticleService,
   NoteService,
@@ -25,7 +24,7 @@ import {
 } from "./actions";
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 function formatDateTime(value: Date | string | null | undefined) {
@@ -58,8 +57,9 @@ export default async function NotesPage({ searchParams }: PageProps) {
     UserService.findAll(),
   ]);
 
-  const status = (searchParams?.status as string | undefined) ?? "";
-  const message = (searchParams?.message as string | undefined) ?? "";
+  const resolvedSearchParams = await searchParams;
+  const status = (resolvedSearchParams?.status as string | undefined) ?? "";
+  const message = (resolvedSearchParams?.message as string | undefined) ?? "";
 
   return (
     <div className="space-y-8 p-6">
@@ -71,7 +71,7 @@ export default async function NotesPage({ searchParams }: PageProps) {
           </p>
         </div>
         <Link
-          className="text-muted-foreground text-sm hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground"
           href="/philosophy"
         >
           查看前台展示
@@ -186,39 +186,49 @@ export default async function NotesPage({ searchParams }: PageProps) {
               <tbody>
                 {notes.length === 0 ? (
                   <tr>
-                    <td className="p-4 text-center text-muted-foreground" colSpan={6}>
+                    <td
+                      className="p-4 text-center text-muted-foreground"
+                      colSpan={6}
+                    >
                       暂无笔记。
                     </td>
                   </tr>
                 ) : (
                   notes.map((note) => (
                     <tr className="border-b last:border-b-0" key={note.id}>
-                      <td className="align-top p-3 font-medium">{note.title}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top font-medium">
+                        {note.title}
+                      </td>
+                      <td className="p-3 align-top">
                         <div className="font-medium">
                           {getArticleTitle(articles, note.articleId)}
                         </div>
-                        <p className="text-muted-foreground text-xs break-all">
+                        <p className="break-all text-muted-foreground text-xs">
                           {note.articleId}
                         </p>
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         <div className="font-medium">
-                          {users.find((user) => user.id === note.userId)?.email ??
-                            "用户已删除"}
+                          {users.find((user) => user.id === note.userId)
+                            ?.email ?? "用户已删除"}
                         </div>
-                        <p className="text-muted-foreground text-xs break-all">
+                        <p className="break-all text-muted-foreground text-xs">
                           {note.userId}
                         </p>
                       </td>
-                      <td className="align-top p-3">{formatDateTime(note.updatedAt)}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
+                        {formatDateTime(note.updatedAt)}
+                      </td>
+                      <td className="p-3 align-top">
                         <p className="line-clamp-6 whitespace-pre-wrap text-muted-foreground text-xs leading-relaxed">
                           {note.content ?? "—"}
                         </p>
                       </td>
-                      <td className="align-top p-3">
-                        <details className="rounded border bg-muted/40 p-3" role="group">
+                      <td className="p-3 align-top">
+                        <details
+                          className="rounded border bg-muted/40 p-3"
+                          role="group"
+                        >
                           <summary className="cursor-pointer font-medium">
                             编辑
                           </summary>
@@ -228,7 +238,9 @@ export default async function NotesPage({ searchParams }: PageProps) {
                           >
                             <input name="id" type="hidden" value={note.id} />
                             <div className="space-y-2">
-                              <Label htmlFor={`article-${note.id}`}>关联文章</Label>
+                              <Label htmlFor={`article-${note.id}`}>
+                                关联文章
+                              </Label>
                               <select
                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 defaultValue={note.articleId}
@@ -244,7 +256,9 @@ export default async function NotesPage({ searchParams }: PageProps) {
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`user-${note.id}`}>所属用户</Label>
+                              <Label htmlFor={`user-${note.id}`}>
+                                所属用户
+                              </Label>
                               <select
                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
                                 defaultValue={note.userId}
@@ -260,7 +274,9 @@ export default async function NotesPage({ searchParams }: PageProps) {
                               </select>
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`title-${note.id}`}>笔记标题</Label>
+                              <Label htmlFor={`title-${note.id}`}>
+                                笔记标题
+                              </Label>
                               <Input
                                 defaultValue={note.title}
                                 id={`title-${note.id}`}
@@ -270,7 +286,9 @@ export default async function NotesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                              <Label htmlFor={`content-${note.id}`}>笔记内容</Label>
+                              <Label htmlFor={`content-${note.id}`}>
+                                笔记内容
+                              </Label>
                               <Textarea
                                 defaultValue={note.content ?? ""}
                                 id={`content-${note.id}`}
@@ -285,7 +303,10 @@ export default async function NotesPage({ searchParams }: PageProps) {
                             </div>
                           </form>
                         </details>
-                        <form action={deleteNoteAction} className="mt-3 inline-block">
+                        <form
+                          action={deleteNoteAction}
+                          className="mt-3 inline-block"
+                        >
                           <input name="id" type="hidden" value={note.id} />
                           <Button type="submit" variant="destructive">
                             删除
@@ -303,4 +324,3 @@ export default async function NotesPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

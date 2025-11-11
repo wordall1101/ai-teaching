@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import {
   ArticleService,
   CourseService,
@@ -25,7 +24,7 @@ import {
 } from "./actions";
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const entityTypeLabels: Record<TocItem["entityType"], string> = {
@@ -93,8 +92,9 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
     CourseService.findAll(),
   ]);
 
-  const status = (searchParams?.status as string | undefined) ?? "";
-  const message = (searchParams?.message as string | undefined) ?? "";
+  const resolvedSearchParams = await searchParams;
+  const status = (resolvedSearchParams?.status as string | undefined) ?? "";
+  const message = (resolvedSearchParams?.message as string | undefined) ?? "";
 
   return (
     <div className="space-y-8 p-6">
@@ -106,7 +106,7 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
           </p>
         </div>
         <Link
-          className="text-muted-foreground text-sm hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground"
           href="/philosophy"
         >
           查看前台展示
@@ -132,11 +132,15 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
         <CardHeader>
           <CardTitle>新增目录项</CardTitle>
           <CardDescription>
-            创建目录节点，关联指定的文章、笔记或课程。可以在下方参考可用的实体 ID。
+            创建目录节点，关联指定的文章、笔记或课程。可以在下方参考可用的实体
+            ID。
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createTocItemAction} className="grid gap-4 md:grid-cols-2">
+          <form
+            action={createTocItemAction}
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="entityType">实体类型</Label>
               <select
@@ -238,14 +242,17 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
               <tbody>
                 {tocItems.length === 0 ? (
                   <tr>
-                    <td className="p-4 text-center text-muted-foreground" colSpan={7}>
+                    <td
+                      className="p-4 text-center text-muted-foreground"
+                      colSpan={7}
+                    >
                       暂无目录数据。
                     </td>
                   </tr>
                 ) : (
                   tocItems.map((item) => (
                     <tr className="border-b last:border-b-0" key={item.id}>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         <div className="font-medium">
                           {entityTypeLabels[item.entityType] ?? item.entityType}
                         </div>
@@ -253,19 +260,24 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                           {item.entityId}
                         </p>
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         {getEntityLabel(item, articles, notes, courses)}
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         <code className="rounded bg-muted px-2 py-1 text-xs">
                           {item.anchorId}
                         </code>
                       </td>
-                      <td className="align-top p-3">{item.level}</td>
-                      <td className="align-top p-3">{item.order}</td>
-                      <td className="align-top p-3">{formatDateTime(item.createdAt)}</td>
-                      <td className="align-top p-3">
-                        <details className="rounded border bg-muted/40 p-3" role="group">
+                      <td className="p-3 align-top">{item.level}</td>
+                      <td className="p-3 align-top">{item.order}</td>
+                      <td className="p-3 align-top">
+                        {formatDateTime(item.createdAt)}
+                      </td>
+                      <td className="p-3 align-top">
+                        <details
+                          className="rounded border bg-muted/40 p-3"
+                          role="group"
+                        >
                           <summary className="cursor-pointer font-medium">
                             编辑
                           </summary>
@@ -285,15 +297,19 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                                 name="entityType"
                                 required
                               >
-                                {Object.entries(entityTypeLabels).map(([value, label]) => (
-                                  <option key={value} value={value}>
-                                    {label}
-                                  </option>
-                                ))}
+                                {Object.entries(entityTypeLabels).map(
+                                  ([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  )
+                                )}
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`entityId-${item.id}`}>实体 ID</Label>
+                              <Label htmlFor={`entityId-${item.id}`}>
+                                实体 ID
+                              </Label>
                               <Input
                                 defaultValue={item.entityId}
                                 id={`entityId-${item.id}`}
@@ -304,7 +320,9 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`title-${item.id}`}>目录标题</Label>
+                              <Label htmlFor={`title-${item.id}`}>
+                                目录标题
+                              </Label>
                               <Input
                                 defaultValue={item.title}
                                 id={`title-${item.id}`}
@@ -314,7 +332,9 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`anchor-${item.id}`}>Anchor</Label>
+                              <Label htmlFor={`anchor-${item.id}`}>
+                                Anchor
+                              </Label>
                               <Input
                                 defaultValue={item.anchorId}
                                 id={`anchor-${item.id}`}
@@ -323,7 +343,9 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                                 pattern="[A-Za-z0-9-_]+"
                                 required
                               />
-                              <p className="text-muted-foreground text-xs">{anchorHint}</p>
+                              <p className="text-muted-foreground text-xs">
+                                {anchorHint}
+                              </p>
                             </div>
                             <div className="space-y-2">
                               <Label htmlFor={`level-${item.id}`}>层级</Label>
@@ -350,7 +372,10 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
                             </div>
                           </form>
                         </details>
-                        <form action={deleteTocItemAction} className="mt-3 inline-block">
+                        <form
+                          action={deleteTocItemAction}
+                          className="mt-3 inline-block"
+                        >
                           <input name="id" type="hidden" value={item.id} />
                           <Button type="submit" variant="destructive">
                             删除
@@ -378,12 +403,11 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
             <h3 className="mb-2 font-semibold text-sm">文章</h3>
             <ul className="space-y-2 text-xs">
               {articles.map((article) => (
-                <li
-                  className="rounded border bg-muted/40 p-3"
-                  key={article.id}
-                >
+                <li className="rounded border bg-muted/40 p-3" key={article.id}>
                   <p className="font-medium">{article.title}</p>
-                  <p className="text-muted-foreground break-all">{article.id}</p>
+                  <p className="break-all text-muted-foreground">
+                    {article.id}
+                  </p>
                 </li>
               ))}
               {articles.length === 0 ? (
@@ -397,7 +421,7 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
               {notes.map((note) => (
                 <li className="rounded border bg-muted/40 p-3" key={note.id}>
                   <p className="font-medium">{note.title}</p>
-                  <p className="text-muted-foreground break-all">{note.id}</p>
+                  <p className="break-all text-muted-foreground">{note.id}</p>
                 </li>
               ))}
               {notes.length === 0 ? (
@@ -411,7 +435,7 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
               {courses.map((course) => (
                 <li className="rounded border bg-muted/40 p-3" key={course.id}>
                   <p className="font-medium">{course.title}</p>
-                  <p className="text-muted-foreground break-all">{course.id}</p>
+                  <p className="break-all text-muted-foreground">{course.id}</p>
                 </li>
               ))}
               {courses.length === 0 ? (
@@ -424,4 +448,3 @@ export default async function TocItemsPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

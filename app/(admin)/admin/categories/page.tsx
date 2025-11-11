@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { CategoryService } from "@/lib/db/repositories/db-service";
 import type { Category } from "@/lib/db/schema";
@@ -21,7 +20,7 @@ import {
 } from "./actions";
 
 type PageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 function formatDate(value: Date | string | null | undefined) {
@@ -63,8 +62,9 @@ function buildIndentedLabel(category: Category) {
 
 export default async function CategoriesPage({ searchParams }: PageProps) {
   const categories = await CategoryService.findAll();
-  const status = (searchParams?.status as string | undefined) ?? "";
-  const message = (searchParams?.message as string | undefined) ?? "";
+  const resolvedSearchParams = await searchParams;
+  const status = (resolvedSearchParams?.status as string | undefined) ?? "";
+  const message = (resolvedSearchParams?.message as string | undefined) ?? "";
 
   return (
     <div className="space-y-8 p-6">
@@ -76,7 +76,7 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
           </p>
         </div>
         <Link
-          className="text-muted-foreground text-sm hover:text-foreground underline underline-offset-4"
+          className="text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground"
           href="/philosophy"
         >
           查看前台展示
@@ -106,7 +106,10 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createCategoryAction} className="grid gap-4 md:grid-cols-2">
+          <form
+            action={createCategoryAction}
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="title">名称</Label>
               <Input
@@ -188,17 +191,17 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
               <tbody>
                 {categories.length === 0 ? (
                   <tr>
-                    <td className="p-4 text-center text-muted-foreground" colSpan={7}>
+                    <td
+                      className="p-4 text-center text-muted-foreground"
+                      colSpan={7}
+                    >
                       暂无分类数据，先创建一个顶级分类吧。
                     </td>
                   </tr>
                 ) : (
                   categories.map((category) => (
-                    <tr
-                      className="border-b last:border-b-0"
-                      key={category.id}
-                    >
-                      <td className="align-top p-3">
+                    <tr className="border-b last:border-b-0" key={category.id}>
+                      <td className="p-3 align-top">
                         <div className="font-medium leading-snug">
                           {category.title}
                         </div>
@@ -208,21 +211,24 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
                           </p>
                         ) : null}
                       </td>
-                      <td className="align-top p-3">{category.level ?? 0}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">{category.level ?? 0}</td>
+                      <td className="p-3 align-top">
                         {getParentTitle(categories, category.parentId ?? null)}
                       </td>
-                      <td className="align-top p-3">{category.order}</td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">{category.order}</td>
+                      <td className="p-3 align-top">
                         <code className="rounded bg-muted px-2 py-1 text-xs">
                           {category.path ?? "—"}
                         </code>
                       </td>
-                      <td className="align-top p-3">
+                      <td className="p-3 align-top">
                         {formatDate(category.updatedAt)}
                       </td>
-                      <td className="align-top p-3">
-                        <details className="rounded border bg-muted/50 p-3" role="group">
+                      <td className="p-3 align-top">
+                        <details
+                          className="rounded border bg-muted/50 p-3"
+                          role="group"
+                        >
                           <summary className="cursor-pointer font-medium">
                             编辑
                           </summary>
@@ -230,9 +236,15 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
                             action={updateCategoryAction}
                             className="mt-3 space-y-3"
                           >
-                            <input name="id" type="hidden" value={category.id} />
+                            <input
+                              name="id"
+                              type="hidden"
+                              value={category.id}
+                            />
                             <div className="space-y-2">
-                              <Label htmlFor={`title-${category.id}`}>名称</Label>
+                              <Label htmlFor={`title-${category.id}`}>
+                                名称
+                              </Label>
                               <Input
                                 defaultValue={category.title}
                                 id={`title-${category.id}`}
@@ -242,7 +254,9 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`description-${category.id}`}>描述</Label>
+                              <Label htmlFor={`description-${category.id}`}>
+                                描述
+                              </Label>
                               <Textarea
                                 defaultValue={category.description ?? ""}
                                 id={`description-${category.id}`}
@@ -252,7 +266,9 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor={`order-${category.id}`}>排序</Label>
+                              <Label htmlFor={`order-${category.id}`}>
+                                排序
+                              </Label>
                               <Input
                                 defaultValue={category.order}
                                 id={`order-${category.id}`}
@@ -267,10 +283,7 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
                             <Button type="submit">保存修改</Button>
                           </form>
                         </details>
-                        <form
-                          action={deleteCategoryAction}
-                          className="mt-3"
-                        >
+                        <form action={deleteCategoryAction} className="mt-3">
                           <input name="id" type="hidden" value={category.id} />
                           <Button type="submit" variant="destructive">
                             删除
@@ -288,4 +301,3 @@ export default async function CategoriesPage({ searchParams }: PageProps) {
     </div>
   );
 }
-
